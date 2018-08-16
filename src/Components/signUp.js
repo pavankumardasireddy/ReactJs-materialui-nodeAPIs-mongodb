@@ -57,14 +57,6 @@ class SignUp extends Component {
           email: "",
           password: "",
           cPassword: ""
-        },
-        regFormError: {
-          firstName: "",
-          lastName: "",
-          phone: "",
-          email: "",
-          password: "",
-          cPassword: ""
         }
     };
   }
@@ -78,18 +70,14 @@ class SignUp extends Component {
   // Submitting signup form values to the API.
   handleSignUp(e, data) {
     e.preventDefault();
-    var error = false;
-    if(data) {
-      var regFormError = {  firstName: "", lastName: "", phone: "", email: "",  password: "", cPassword: ""};
-    }
 
     // Checking each value, if empty then showing the alert message.
-    data.regForm.firstName=="" ? swal("firstName is required") : ''
-    data.regForm.lastName=="" ? swal("lastName is required") : ''
-    data.regForm.phone=="" ? swal("phone is required") : ''
-    data.regForm.email=="" ? swal("email is required") : ''
-    data.regForm.password=="" ? swal("password is required") : ''
-    data.regForm.cPassword=="" ? swal("cPassword is required") : ''
+    data.regForm.firstName=="" ? swal("First Name is required") : ''
+    data.regForm.lastName=="" ? swal("Last Name is required") : ''
+    data.regForm.phone=="" ? swal("Phone is required") : ''
+    data.regForm.email=="" ? swal("Email Address is required") : ''
+    data.regForm.password=="" ? swal("Password is required") : ''
+    data.regForm.cPassword=="" ? swal("Confirm Password is required") : ''
     {
       (data.regForm.password!=="" && data.regForm.cPassword!=="") ? ( (data.regForm.password !== data.regForm.cPassword)?(
         swal("Password and confirm password should be the same.")
@@ -139,18 +127,6 @@ class SignUp extends Component {
             </Avatar>
             <Typography variant="headline">Sign Up</Typography>
             <form className={classes.form} onSubmit={(e)=>{this.handleSignUp(e, this.state)}}>
-              {/* <TextField
-                id="fName"
-                label="First Name"
-                className={classes.textField}
-                value={this.state.regForm.firstName.value}
-                onChange={this.handleChange('firstName')}
-                margin="normal"
-                required
-                inputProps={{
-                  maxLength: 2,
-                }}
-              /> */}
             <FormControl margin="normal" required >
                 <InputLabel htmlFor="fname">First Name</InputLabel>
                 <Input
