@@ -8,9 +8,11 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import PermIdentity from '@material-ui/icons/PermIdentity';
 import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
+import {Typography, TextField} from '@material-ui/core';
 import withStyles from '@material-ui/core/styles/withStyles';
+import swal from 'sweetalert';
 
+// Form styles
 const styles = theme => ({
   layout: {
     width: 'auto',
@@ -67,26 +69,35 @@ class SignUp extends Component {
     };
   }
 
+  // Manging form values with state
   handleChange = name => event => {
     var value = event.target.value ? event.target.value : ''
     this.setState((state) => { state.regForm[name]= value });
   };
+
+  // Submitting signup form values to the API.
   handleSignUp(e, data) {
     e.preventDefault();
     var error = false;
-    console.log("D@tA: ",data);
     if(data) {
       var regFormError = {  firstName: "", lastName: "", phone: "", email: "",  password: "", cPassword: ""};
     }
-    data.regForm.firstName=="" ? alert("firstName is required") : ''
-    data.regForm.lastName=="" ? alert("lastName is required") : ''
-    data.regForm.phone=="" ? alert("phone is required") : ''
-    data.regForm.email=="" ? alert("email is required") : ''
-    data.regForm.password=="" ? alert("password is required") : ''
-    data.regForm.cPassword=="" ? alert("cPassword is required") : ''
 
-    
-    if(this.state.regForm.firstName!='' &&this.state.regForm.lastName!='' && this.state.regForm.phone != "" && this.state.regForm.email != ""&& this.state.regForm.password != ""&&this.state.regForm.cPassword != ""){
+    // Checking each value, if empty then showing the alert message.
+    data.regForm.firstName=="" ? swal("firstName is required") : ''
+    data.regForm.lastName=="" ? swal("lastName is required") : ''
+    data.regForm.phone=="" ? swal("phone is required") : ''
+    data.regForm.email=="" ? swal("email is required") : ''
+    data.regForm.password=="" ? swal("password is required") : ''
+    data.regForm.cPassword=="" ? swal("cPassword is required") : ''
+    {
+      (data.regForm.password!=="" && data.regForm.cPassword!=="") ? ( (data.regForm.password !== data.regForm.cPassword)?(
+        swal("Password and confirm password should be the same.")
+      ):(null)) :(null)
+    }
+
+    //Checking for the form values are filled or not if filled then passing data to the API
+    if(this.state.regForm.firstName!=='' &&this.state.regForm.lastName!=='' && this.state.regForm.phone !== "" && this.state.regForm.email !== ""&& this.state.regForm.password !== ""&&this.state.regForm.cPassword !== "" && this.state.regForm.password === this.state.regForm.cPassword){
       var SignUpData={
         firstName  : this.state.regForm.firstName,
         lastName : this.state.regForm.lastName,
@@ -95,51 +106,26 @@ class SignUp extends Component {
         password : this.state.regForm.password,
         cPassword : this.state.regForm.cPassword 
       }
+
+      // Register API call using fetch
       fetch('http://localhost:5000/register', {
-        mode: 'no-cors',
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: SignUpData
-       })
+        body: JSON.stringify(SignUpData),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
        .then((response)=>response.json())
         .then((data)=>{
-          console.log("success::::::",data)
+          swal("Success!", "You've registered successfully!", "success")
+          .then((value) => {
+            window.location.reload()
+          });
         })
         .catch((error)=>{
-          console.log("error::::::",error)
+          console.log("Error, with message::",error)
         });
     }
-
-  //   // dynamic data
-  //   if (this.state.userType !== "INSPECTOR") {
-  //     
-  //   }else {
-  //     var data={
-  //       type:this.state.userType,
-  //       firstName  : this.state.registerForm.firstName,
-  //       lastName : this.state.registerForm.lastName,
-  //       email : this.state.registerForm.email,
-  //       password : this.state.registerForm.password,
-  //       code:this.state.registerForm.countryCode,
-  //       phone:this.state.registerForm.phone,
-  //       company:this.state.registerForm.inspectorCompanyName,
-  //       employmentType:this.state.employmentType.value,
-  //       qualification:this.state.qualification.value,
-  //       title:this.state.title.value,
-  //       city: this.state.registerForm.inspectorCity,
-  //       country:this.state.inspectorCountry.value,
-  //       postalCode:this.state.registerForm.inspectorPostalCode
-  //    }
-  //   }
-
-  //   if(error) {
-  //     //alert("error")
-  //     this.setState( (state) => { state.registerFormError = registerFormError; state.signUpSuccess = false;});
-  //     return;
-  //   }else{
-  //     //console.log("$!GN UP: "+JSON.stringify(data))
-  //     this.props.registerMe(data);
-  //  }
   }
   render() {
     const { classes } = this.props;
@@ -153,6 +139,18 @@ class SignUp extends Component {
             </Avatar>
             <Typography variant="headline">Sign Up</Typography>
             <form className={classes.form} onSubmit={(e)=>{this.handleSignUp(e, this.state)}}>
+              {/* <TextField
+                id="fName"
+                label="First Name"
+                className={classes.textField}
+                value={this.state.regForm.firstName.value}
+                onChange={this.handleChange('firstName')}
+                margin="normal"
+                required
+                inputProps={{
+                  maxLength: 2,
+                }}
+              /> */}
             <FormControl margin="normal" required >
                 <InputLabel htmlFor="fname">First Name</InputLabel>
                 <Input
@@ -179,6 +177,10 @@ class SignUp extends Component {
                   name="phone"
                   type="number"
                   onChange={this.handleChange('phone')}
+                  onInput={(e)=>{
+                    e.target.value = Math.max(0, parseInt(e.target.value) ).toString().slice(0,10)
+                }}
+                min={10}
                 />
               </FormControl>
               <FormControl margin="normal" required fullWidth>
