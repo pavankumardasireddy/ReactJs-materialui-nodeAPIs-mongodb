@@ -13,8 +13,7 @@ router.post('/register', function (req, res) {
         lastName : req.body.lastName,
         phone : req.body.phone,
         email : req.body.email,
-        password : req.body.password,
-        cPassword : req.body.cPassword
+        password : req.body.password
     }, 
     function (err, user) {
         if (err) return res.status(500).send("There was a problem adding the user information to the database.");

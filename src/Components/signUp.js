@@ -91,8 +91,7 @@ class SignUp extends Component {
         lastName : this.state.regForm.lastName,
         phone:this.state.regForm.phone,
         email : this.state.regForm.email,
-        password : this.state.regForm.password,
-        cPassword : this.state.regForm.cPassword 
+        password : this.state.regForm.password 
       }
 
       // Register API call using fetch
