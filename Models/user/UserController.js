@@ -22,4 +22,22 @@ router.post('/register', function (req, res) {
     });
 });
 
+// LOGIN USER
+router.post('/login', function (req, res) {
+    var username = req.body.email
+    User.findOne({ email: username }).then((err,user) => {
+       
+        if (!user) {
+            res.send({status:"failure",message:"User is not valid"})
+        }
+        if (req.body.password != user.password) {
+            res.send({status:"failure",message:"Password is not valid"})
+        }
+        else {
+            res.send({status:"success",userId:user._id})
+        }
+    }
+    )
+})
+
 module.exports = router;

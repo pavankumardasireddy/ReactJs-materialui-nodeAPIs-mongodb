@@ -14,7 +14,7 @@ app.all('*', function (req, res, next) {
     next();
 });
 
-var UserController = require('./Models/user/UserController');
+var UserController = require('./models/user/UserController');
 app.use('/', UserController);
 
 module.exports = app;
