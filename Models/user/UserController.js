@@ -1,4 +1,5 @@
 var express = require('express');
+const array = require('./array.json')
 var router = express.Router();
 var bodyParser = require('body-parser');
 var fs = require('fs');
@@ -40,28 +41,39 @@ router.post('/login', function (req, res) {
     )
 })
 
-router.post('/export', function (req, res) {
-    const array = [
-        { value: 'Received', label: 'Received' },
-        { value: 'In Progress', label: 'In Progress' },
-        { value: 'Responded', label: 'Responded' },
-        { value: 'Closed', label: 'Closed' }
-    ]
+router.post('/export', (req, res) => {
+    
     var len = array.length;
-    
+    var dir = './files';
+
+    if (!fs.existsSync(dir)){
+        fs.mkdirSync(dir);
+    }
     array.map((obj, key)=>{
-        fs.writeFile(`file${key}.txt`, JSON.stringify(obj, null, 2), function(err, result) {
-            if(err) {
-                console.log('error', err);
-            } else {
-                len --;
-                if(len == 0){
-                    res.send({status:"exported"})
-                }                
-            }    
-        });
+        if(obj.verses) {
+            let quote = obj.verses;
+            /* eg1 starts */
+            // var regex = /(\d(?:[-:]\d)?)/g;
+            // var subst = '\n$1';
+            // var result = quote.replace(regex, subst);
+           /*ends */
+            /* eg2starts*/
+            //var result = quote.replace(/(?!^)\s*(\d+(?:[-:]\d+)?)/g, '\n$1');
+            /*ends */
+
+            /*working code */ 
+            var result = quote.replace("\n", "\\n").replace(/\s([0-9])/g, '\n$1');
+            fs.writeFile(`${dir}/1bible_${obj.link}_29.txt`, `${result}`, function(err, res1) {
+                if(err) console.log('error', err);
+                else {
+                    len --;
+                    if(len == 0){
+                        res.send({status:"files exported successfully!"})
+                    }                
+                }    
+            });
+        }       
     })
-    
-})
+});
 
 module.exports = router;
