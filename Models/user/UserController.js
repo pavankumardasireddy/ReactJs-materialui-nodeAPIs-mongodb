@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var bodyParser = require('body-parser');
-
+var fs = require('fs');
 router.use(bodyParser.urlencoded({ extended: true }));
 router.use(bodyParser.json());
 var User = require('./User');
@@ -38,6 +38,30 @@ router.post('/login', function (req, res) {
         }
     }
     )
+})
+
+router.post('/export', function (req, res) {
+    const array = [
+        { value: 'Received', label: 'Received' },
+        { value: 'In Progress', label: 'In Progress' },
+        { value: 'Responded', label: 'Responded' },
+        { value: 'Closed', label: 'Closed' }
+    ]
+    var len = array.length;
+    
+    array.map((obj, key)=>{
+        fs.writeFile(`file${key}.txt`, JSON.stringify(obj, null, 2), function(err, result) {
+            if(err) {
+                console.log('error', err);
+            } else {
+                len --;
+                if(len == 0){
+                    res.send({status:"exported"})
+                }                
+            }    
+        });
+    })
+    
 })
 
 module.exports = router;
